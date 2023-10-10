@@ -2,11 +2,11 @@
 pragma solidity ^0.8.0;
 
 contract AmicusHub {
-    // TODO - Need to decide what makes the most sense for address.
-    // Mapping of UserProfile contract address OR wallet address to array of their friends.
+    // Mapping of UserProfile contract address to array of friends.
+    // The UserProfile contract of each user will be responsible for
+    // interacting with the AmicusHub functions.
     mapping(address => address[]) public friends;
-
-    // Mapping to track friend requests for each user.
+    // Mapping to track outgoing friend requests for each user.
     mapping(address => mapping(address => bool)) public friendRequests;
 
     event FriendRequestSent(address indexed sender, address indexed recipient);
@@ -23,7 +23,7 @@ contract AmicusHub {
 
         require(!friendRequests[msg.sender][recipient], "You have already sent a friend request to this user.");
 
-        require(_isFriend(msg.sender, recipient), "You are already friends with this user.");
+        require(!_isFriend(msg.sender, recipient), "You are already friends with this user.");
 
         friendRequests[msg.sender][recipient] = true;
 

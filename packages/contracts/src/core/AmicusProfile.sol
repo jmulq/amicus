@@ -4,14 +4,14 @@ pragma solidity ^0.8.0;
 import "./AmicusHub.sol";
 
 contract AmicusProfile {
-    AmicusHub public amicusHub;
+    AmicusHub private amicusHub;
     
     string public name;
     string public image;
 
     
-    constructor(address _amicusHub, string memory _name, string memory _image) {
-        amicusHub = AmicusHub(_amicusHub);
+    constructor(AmicusHub _amicusHub, string memory _name, string memory _image) {
+        amicusHub = _amicusHub;
         name = _name;
         image = _image;
     }
