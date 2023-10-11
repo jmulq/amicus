@@ -17,7 +17,7 @@ contract AmicusProfileFactory {
     }
 
     function createUserProfile(string memory name, string memory image) external {
-        AmicusProfile newProfile = new AmicusProfile(hub, name, image);
+        AmicusProfile newProfile = new AmicusProfile(hub, msg.sender, name, image);
 
         registry.registerUserProfile(msg.sender, address(newProfile));
 

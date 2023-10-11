@@ -6,6 +6,7 @@ contract AmicusRegistry {
     // For the MVP we assume that the owner will be a wallet,
     // hence walletToProfile.
     mapping(address => address) public walletToProfile;
+    mapping(address => address) public profileToWallet;
 
     event ProfileRegistered(address indexed profile, address indexed owner);
 
@@ -13,11 +14,16 @@ contract AmicusRegistry {
         require(walletToProfile[owner] == address(0), "Profile already registered");
 
         walletToProfile[owner] = profile;
+        profileToWallet[profile] = owner;
 
         emit ProfileRegistered(profile, owner);
     }
 
     function getUserProfileAddress(address owner) external view returns (address) {
         return walletToProfile[owner];
+    }
+    
+    function getProfileWalletAddress(address profile) external view returns (address) {
+        return profileToWallet[profile];
     }
 }

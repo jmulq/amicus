@@ -13,8 +13,8 @@ contract AmicusHub {
     event FriendRequestAccepted(address indexed sender, address indexed recipient);
     event FriendRequestRejected(address indexed sender, address indexed recipient);
 
-    function getFriends(address user) external view returns (address[] memory) {
-        return friends[user];
+    function getFriends() external view returns (address[] memory) {
+        return friends[msg.sender];
     }
 
     // TODO - Add access control so only auth contracts (UserProfiles) can call this function.
