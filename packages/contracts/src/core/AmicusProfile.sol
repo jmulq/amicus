@@ -8,22 +8,27 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract AmicusProfile is Ownable {
     AmicusHub private amicusHub;
     
-    address public owner;
     string public name;
     string public image;
 
-    // TODO - Format solidity code
     constructor(
         AmicusHub _amicusHub, address _owner, string memory _name, string memory _image
     ) Ownable(_owner) {
         amicusHub = _amicusHub;
-        owner = _owner;
         name = _name;
         image = _image;
     }
 
     function getFriends() external view onlyOwner returns (address[] memory) {
-        return amicusHub.getFriends(address(this));
+        return amicusHub.getFriends();
+    }
+
+    function getInboundFriendRequests() external view onlyOwner returns (address[] memory) {
+        return amicusHub.getInboundFriendRequests();
+    }
+    
+    function getOutboundFriendRequests() external view onlyOwner returns (address[] memory) {
+        return amicusHub.getOutboundFriendRequests();
     }
  
     // Recipient is the address of the recipients UserProfile contract
