@@ -9,7 +9,15 @@ type Props = {
   children: React.ReactNode;
 } & React.ComponentProps<'button'>;
 
-const Button: React.FC<Props> = ({ size, intent, className = '', disabled, href, children }) => {
+const Button: React.FC<Props> = ({
+  size,
+  intent,
+  className = '',
+  disabled,
+  href,
+  children,
+  ...props
+}) => {
   const classes = classNames(
     intent === 'primary'
       ? 'bg-primary-300'
@@ -31,7 +39,9 @@ const Button: React.FC<Props> = ({ size, intent, className = '', disabled, href,
           {children}
         </Link>
       ) : (
-        <button className={classes}>{children}</button>
+        <button className={classes} {...props}>
+          {children}
+        </button>
       )}
     </>
   );

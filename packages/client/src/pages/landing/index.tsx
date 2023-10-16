@@ -14,7 +14,7 @@ const LandingPage = () => (
           Unlock a New Era of Social Connectivity in Web3. Own Your Network, Seamlessly Across
           Blockchains.
         </h2>
-        <Button size='lg' intent='primary' href='/register' className='rounded-full py-5 px-32'>
+        <Button size='lg' intent='primary' href='/register' className='rounded-full py-5 !px-28'>
           Get Started
         </Button>
       </div>

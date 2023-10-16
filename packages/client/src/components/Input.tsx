@@ -22,6 +22,7 @@ const Input: React.FC<Props> = ({
   className = '',
   readOnly,
   required,
+  ...props
 }) => {
   const { register, formState } = useFormContext() ?? {};
   const { errors, touchedFields } = formState ?? {};
@@ -41,8 +42,10 @@ const Input: React.FC<Props> = ({
         {...(detached ? {} : register(name, validation))}
         className={classNames(
           'border-b border-primary-300 overflow-hidden focus:ring-0 focus:outline-none px-4 py-2 ',
+          readOnly ? 'text-neutral-500' : '',
           className,
         )}
+        {...props}
       />
       {hasError && (
         <div className='mb-1 text-sm text-red-400'>{errors[name]?.message as string}</div>
