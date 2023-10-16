@@ -2,10 +2,13 @@
 pragma solidity ^0.8.0;
 
 import "./AmicusHub.sol";
+import "./AmicusLibrary.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 
 contract AmicusProfile is Ownable {
+    using AmicusLibrary for AmicusLibrary.Friend;
+
     AmicusHub private amicusHub;
     
     string public name;
@@ -19,15 +22,15 @@ contract AmicusProfile is Ownable {
         image = _image;
     }
 
-    function getFriends() external view onlyOwner returns (address[] memory) {
+    function getFriends() external view onlyOwner returns (AmicusLibrary.Friend[] memory) {
         return amicusHub.getFriends();
     }
 
-    function getInboundFriendRequests() external view onlyOwner returns (address[] memory) {
+    function getInboundFriendRequests() external view onlyOwner returns (AmicusLibrary.Friend[] memory) {
         return amicusHub.getInboundFriendRequests();
     }
     
-    function getOutboundFriendRequests() external view onlyOwner returns (address[] memory) {
+    function getOutboundFriendRequests() external view onlyOwner returns (AmicusLibrary.Friend[] memory) {
         return amicusHub.getOutboundFriendRequests();
     }
  
@@ -44,5 +47,26 @@ contract AmicusProfile is Ownable {
     // Sender is the address of the senders UserProfile contract
     function rejectFriendRequest(address sender) external onlyOwner {
         amicusHub.rejectFriendRequest(sender);
+    }
+
+    // Recipient is the address of the recipients UserProfile contract
+    // DestinationChain is the wormhole chain ID the request will be sent to
+    // Target address is the AmicusHub contract address on the target chain
+    function sendCrossChainFriendRequest(address recipient, uint16 destinationChain, address targetAddress) external payable onlyOwner {
+        amicusHub.sendCrossChainFriendRequest{value: msg.value}(recipient, destinationChain, targetAddress);
+    }
+
+    // Sender is the address of the request senders UserProfile contract
+    // SourceChain is the wormhole chain ID the request was sent from
+    // Target address is the AmicusHub contract address on the target chain (the chain the request was sent from)
+    function acceptCrossChainFriendRequest(address sender, uint16 sourceChain, address targetAddress) external payable onlyOwner {
+        amicusHub.acceptCrossChainFriendRequest{value: msg.value}(sender, sourceChain, targetAddress);
+    }
+
+    // Sender is the address of the request senders UserProfile contract
+    // SourceChain is the wormhole chain ID the request was sent from
+    // Target address is the AmicusHub contract address on the target chain (the chain the request was sent from)
+    function rejectCrossChainFriendRequest(address sender, uint16 sourceChain, address targetAddress) external payable onlyOwner {
+        amicusHub.rejectCrossChainFriendRequest{value: msg.value}(sender, sourceChain, targetAddress);
     }
 }
