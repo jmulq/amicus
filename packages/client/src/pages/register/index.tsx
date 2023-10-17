@@ -1,14 +1,24 @@
+import AmicusProfileFactory from '@/abis/AmicusProfileFactory.json';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
 import Layout from '@/layout';
 import { truncateAddress } from '@/util';
 import { classNames } from '@/utils';
+import { contracts } from '@/web3/config';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useAccount } from 'wagmi';
+import {
+  useAccount,
+  useChainId,
+  useContractWrite,
+  usePrepareContractWrite,
+  useWaitForTransaction,
+} from 'wagmi';
 
 const RegisterPage = () => {
   const { address } = useAccount();
+  const chainId = useChainId();
+
   const truncatedAddress = truncateAddress(address, 15);
 
   const methods = useForm({
@@ -22,7 +32,7 @@ const RegisterPage = () => {
   useEffect(() => {
     if (address) {
       methods.reset({
-        address: truncatedAddress
+        address: truncatedAddress,
       });
     }
 
@@ -34,9 +44,31 @@ const RegisterPage = () => {
     }
   }, [address, methods, truncatedAddress]);
 
+  const { config } = usePrepareContractWrite({
+    address: contracts[chainId === (5 || 80001) ? chainId : 5].factory,
+    abi: AmicusProfileFactory,
+    functionName: 'createUserProfile',
+    args: [methods.getValues('username'), 'IMAGE-URL'],
+    enabled: Boolean(methods.getValues('username')),
+  });
+
+  const { data, write } = useContractWrite(config);
+
+  const { isLoading, isSuccess, isError } = useWaitForTransaction({
+    hash: data?.hash,
+  });
+
+  // User Profile contract deployment transaction status'
+  // Can use these for displaying relevant UI
+  // Can add other error handling like so -> https://wagmi.sh/examples/contract-write-dynamic#bonus-point-add-some-error-handling
+  console.log('isLoading', isLoading)
+  console.log('isSuccess', isSuccess)
+  console.log('isError', isError)
+
   const onSubmit = methods.handleSubmit((input) => {
     const data = { ...input, address };
     console.log(data);
+    write?.();
   });
 
   return (

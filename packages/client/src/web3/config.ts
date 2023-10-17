@@ -1,11 +1,17 @@
 import { getDefaultWallets } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig } from 'wagmi';
-import { arbitrum, base, mainnet, optimism, polygon, zora } from 'wagmi/chains';
+import { goerli, polygonMumbai } from 'wagmi/chains';
+import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 
 const { chains, publicClient } = configureChains(
-  [mainnet, polygon, optimism, arbitrum, base, zora],
-  [publicProvider()],
+  [polygonMumbai, goerli],
+  [
+    alchemyProvider({
+      apiKey: import.meta.env.VITE_ALCHEMY_API_KEY,
+    }),
+    publicProvider(),
+  ]
 );
 
 const { connectors } = getDefaultWallets({
@@ -20,4 +26,17 @@ const wagmiConfig = createConfig({
   publicClient,
 });
 
-export { chains, wagmiConfig };
+const contracts = {
+  5: {
+    factory: import.meta.env.VITE_GOERLI_FACTORY,
+    registry: import.meta.env.VITE_GOERLI_REGISTRY,
+    hub: import.meta.env.VITE_GOERLI_HUB,
+  },
+  80001: {
+    factory: import.meta.env.VITE_MUMBAI_FACTORY,
+    registry: import.meta.env.VITE_MUMBAI_REGISTRY,
+    hub: import.meta.env.VITE_MUMBAI_HUB,
+  },
+};
+
+export { chains, contracts, wagmiConfig };
