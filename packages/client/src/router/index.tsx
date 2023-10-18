@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { lazy } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
-import Route from './route';
+import ProtectedRoute from './route';
 
 const LandingPage = lazy(() => import('../pages/landing'));
 const ProfilePage = lazy(() => import('../pages/profile'));
@@ -14,35 +14,23 @@ const router = createBrowserRouter([
   },
   {
     path: '/register',
-    element: (
-      <Route>
-        <RegisterPage />
-      </Route>
-    ),
+    element: <RegisterPage />,
   },
   {
     path: '/profile',
     element: (
-      <Route>
+      <ProtectedRoute>
         <ProfilePage />
-      </Route>
+      </ProtectedRoute>
     ),
   },
   {
     path: '/users/:address',
-    element: (
-      <Route>
-        <ProfilePage />
-      </Route>
-    ),
+    element: <ProfilePage />,
   },
   {
     path: '/about',
-    element: (
-      <Route>
-        <div>About</div>
-      </Route>
-    ),
+    element: <div>About</div>,
   },
   {
     path: '*',
