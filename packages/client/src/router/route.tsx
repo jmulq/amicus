@@ -1,8 +1,15 @@
+import { Navigate } from 'react-router-dom';
 import { Route as RouteType } from '../types';
+import { useAccount } from 'wagmi';
 
-const Route: React.FC<RouteType> = ({ guard, children }) => {
-  if (guard) console.log('firstGuard');
+const ProtectedRoute: React.FC<RouteType> = ({ redirectTo = '/register', children }) => {
+  const {address} = useAccount();
+
+  if (!address) {
+    return <Navigate to={redirectTo} replace />;
+  }
+
   return <>{children}</>;
 };
 
-export default Route;
+export default ProtectedRoute;

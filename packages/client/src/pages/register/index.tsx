@@ -1,23 +1,27 @@
 import AmicusProfileFactory from '@/abis/AmicusProfileFactory.json';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
+import useChainExplorer from '@/hooks/useChainExplorer';
 import Layout from '@/layout';
-import { truncateAddress } from '@/util';
-import { classNames } from '@/utils';
-import { contracts } from '@/web3/config';
+import { classNames, truncateAddress } from '@/utils';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import {
-  useAccount,
-  useChainId,
-  useContractWrite,
-  usePrepareContractWrite,
-  useWaitForTransaction,
-} from 'wagmi';
+import { useNavigate } from 'react-router-dom';
+import { useAccount } from 'wagmi';
 
 const RegisterPage = () => {
+  const naviage = useNavigate();
   const { address } = useAccount();
-  const chainId = useChainId();
+  const { execute, prepare, transaction } = useChainExplorer(AmicusProfileFactory);
+
+  const error = prepare.isError || transaction.isError;
+  const isLoading = prepare.isLoading || transaction.isLoading;
+
+  useEffect(() => {
+    if (transaction.isSuccess) {
+      naviage('/profile');
+    }
+  }, [naviage, transaction.isSuccess]);
 
   const truncatedAddress = truncateAddress(address, 15);
 
@@ -44,31 +48,8 @@ const RegisterPage = () => {
     }
   }, [address, methods, truncatedAddress]);
 
-  const { config } = usePrepareContractWrite({
-    address: contracts[chainId === (5 || 80001) ? chainId : 5].factory,
-    abi: AmicusProfileFactory,
-    functionName: 'createUserProfile',
-    args: [methods.getValues('username'), 'IMAGE-URL'],
-    enabled: Boolean(methods.getValues('username')),
-  });
-
-  const { data, write } = useContractWrite(config);
-
-  const { isLoading, isSuccess, isError } = useWaitForTransaction({
-    hash: data?.hash,
-  });
-
-  // User Profile contract deployment transaction status'
-  // Can use these for displaying relevant UI
-  // Can add other error handling like so -> https://wagmi.sh/examples/contract-write-dynamic#bonus-point-add-some-error-handling
-  console.log('isLoading', isLoading)
-  console.log('isSuccess', isSuccess)
-  console.log('isError', isError)
-
   const onSubmit = methods.handleSubmit((input) => {
-    const data = { ...input, address };
-    console.log(data);
-    write?.();
+    execute('createUserProfile', [input.username, 'IMG-URL'], !!address && !!input.username);
   });
 
   return (
@@ -105,9 +86,15 @@ const RegisterPage = () => {
           </p>
         )}
 
+        {address && error && (
+          <p className='bg-red-100 text-red-800 rounded-md px-2 py-1 text-center border'>
+            Tranaction failed. Please try again later.
+          </p>
+        )}
+
         <FormProvider {...methods}>
           <form>
-            <fieldset className='space-y-5' disabled={!address}>
+            <fieldset className='space-y-5' disabled={!address || isLoading}>
               <Input name='address' label='address' readOnly className='rounded-full py-3 w-80' />
               <Input name='username' label='username' required className='rounded-full py-3 w-80' />
             </fieldset>
@@ -118,10 +105,10 @@ const RegisterPage = () => {
           size='lg'
           intent='primary'
           className='rounded-full w-80'
-          disabled={!address}
+          disabled={!address || isLoading}
           onClick={onSubmit}
         >
-          Register
+          {isLoading ? 'Registering...' : 'Register'}
         </Button>
       </div>
     </Layout>

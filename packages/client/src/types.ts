@@ -1,4 +1,4 @@
 export type Route = {
-  guard?: boolean;
+  redirectTo?: string;
   children: React.ReactNode;
 };
