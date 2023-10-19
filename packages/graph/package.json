@@ -1,0 +1,19 @@
+{
+  "name": "amicus-goerli",
+  "license": "UNLICENSED",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy:goerli": "graph deploy --product hosted-service jmulq/amicus-goerli --network goerli",
+    "deploy:mumbai": "graph deploy --product hosted-service jmulq/amicus-mumbai --network mumbai",
+    "create-local": "graph create --node http://localhost:8020/ jmulq/amicus-goerli",
+    "remove-local": "graph remove --node http://localhost:8020/ jmulq/amicus-goerli",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 jmulq/amicus-goerli",
+    "test": "graph test"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.54.0",
+    "@graphprotocol/graph-ts": "0.30.0"
+  },
+  "devDependencies": { "matchstick-as": "0.5.0" }
+}
