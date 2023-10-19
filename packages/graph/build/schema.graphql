@@ -1,0 +1,14 @@
+type ProfileCreated @entity(immutable: true) {
+  id: Bytes!
+  profile: Bytes! # address
+  owner: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type AmicusProfile @entity {
+  id: Bytes!
+  name: String!
+  image: String!
+}

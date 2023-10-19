@@ -1,0 +1,14 @@
+{
+  "goerli": {
+    "AmicusProfileFactory": {
+      "address": "0xB013d517a61162D1a52416A5bF645696cE363d79",
+      "startBlock": 9888859
+    }
+  },
+  "mumbai": {
+    "AmicusProfileFactory": {
+      "address": "0x6F34BCeC383dC4cf440269AA58040539bbf922d5",
+      "startBlock": 41349320
+    }
+  }
+}

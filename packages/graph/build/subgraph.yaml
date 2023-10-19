@@ -1,0 +1,46 @@
+specVersion: 0.0.5
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum
+    name: AmicusProfileFactory
+    network: goerli
+    source:
+      abi: AmicusProfileFactory
+      address: "0xB013d517a61162D1a52416A5bF645696cE363d79"
+      startBlock: 9888859
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ProfileCreated
+        - Profile
+      abis:
+        - name: AmicusProfileFactory
+          file: AmicusProfileFactory/abis/AmicusProfileFactory.json
+        - name: AmicusProfile
+          file: AmicusProfileFactory/abis/AmicusProfile.json
+      eventHandlers:
+        - event: ProfileCreated(indexed address,indexed address)
+          handler: handleProfileCreated
+      file: AmicusProfileFactory/AmicusProfileFactory.wasm
+templates:
+  - kind: ethereum
+    name: AmicusProfile
+    network: goerli
+    source:
+      abi: AmicusProfile
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Profile
+      abis:
+        - name: AmicusProfile
+          file: AmicusProfile/abis/AmicusProfile.json
+      eventHandlers:
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+      file: templates/AmicusProfile/AmicusProfile.wasm
