@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const classNames = (...classes: string[]) => {
   return classes.filter(Boolean).join(' ');
 };
@@ -18,4 +19,10 @@ export const truncateAddress = (
   }
 
   return `${address.slice(0, left)}...${address.slice(-right)}`;
+};
+
+export const isStringArray = (
+  arr: string[] | { address: `0x${string}`; abi: any; functionName: string }[],
+) => {
+  return Array.isArray(arr) && arr.every((item) => typeof item === 'string');
 };

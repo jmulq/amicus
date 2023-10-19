@@ -1,32 +1,27 @@
-import { ReactNode, createContext, useContext, useState } from "react";
-import { zeroAddress } from "viem";
+/* eslint-disable react-refresh/only-export-components */
+import { contracts } from '@/web3/config';
+import { ReactNode, createContext } from 'react';
+import { zeroAddress } from 'viem';
+import { useAccount, useChainId, useContractRead } from 'wagmi';
+import AmicusRegistry from '../abis/AmicusRegistry.json';
 
-const AmicusProfileContext = createContext<{
-  profile: `0x${string}`;
-  setProfile: React.Dispatch<React.SetStateAction<`0x${string}`>>;
-} | null>(null);
+export const AmicusProfileContext = createContext<`0x${string}`>(zeroAddress);
 
-export const AmicusProfileProvider = ({
-  children,
-}: {
-  children: ReactNode;
-}) => {
-  const [profile, setProfile] = useState<`0x${string}`>(zeroAddress);
+export const AmicusProfileProvider = ({ children }: { children: ReactNode }) => {
+  const chainId = useChainId();
+  const { address } = useAccount();
+
+  const { data } = useContractRead({
+    address: contracts[chainId === (5 || 80001) ? chainId : 5].registry,
+    abi: AmicusRegistry,
+    functionName: 'getUserProfileAddress',
+    args: [address],
+    enabled: Boolean(address),
+  });
 
   return (
-    <AmicusProfileContext.Provider value={{ profile, setProfile }}>
+    <AmicusProfileContext.Provider value={data as `0x${string}`}>
       {children}
     </AmicusProfileContext.Provider>
   );
-};
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const useAmicusProfile = () => {
-  const context = useContext(AmicusProfileContext);
-  if (!context) {
-    throw new Error(
-      "useAmicusProfile must be used within a AmicusProfileProvider"
-    );
-  }
-  return context;
 };

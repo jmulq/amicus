@@ -6,22 +6,23 @@ import Layout from '@/layout';
 import { classNames, truncateAddress } from '@/utils';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { ThreeDots } from 'react-loader-spinner';
 import { useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
 const RegisterPage = () => {
   const naviage = useNavigate();
   const { address } = useAccount();
-  const { execute, prepare, transaction } = useChainExplorer(AmicusProfileFactory);
-
-  const error = prepare.isError || transaction.isError;
-  const isLoading = prepare.isLoading || transaction.isLoading;
+  
+  const { writeFn, isLoading, isSuccess, error } = useChainExplorer({
+    abi: AmicusProfileFactory,
+  });
 
   useEffect(() => {
-    if (transaction.isSuccess) {
+    if (isSuccess) {
       naviage('/profile');
     }
-  }, [naviage, transaction.isSuccess]);
+  }, [naviage, isSuccess]);
 
   const truncatedAddress = truncateAddress(address, 15);
 
@@ -49,7 +50,7 @@ const RegisterPage = () => {
   }, [address, methods, truncatedAddress]);
 
   const onSubmit = methods.handleSubmit((input) => {
-    execute('createUserProfile', [input.username, 'IMG-URL'], !!address && !!input.username);
+    writeFn('createUserProfile', [input.username, 'IMG-URL'], !!address && !!input.username);
   });
 
   return (
@@ -104,11 +105,19 @@ const RegisterPage = () => {
           type='submit'
           size='lg'
           intent='primary'
-          className='rounded-full w-80'
+          className='rounded-full w-80 flex text-center justify-center items-center gap-x-2'
           disabled={!address || isLoading}
           onClick={onSubmit}
         >
-          {isLoading ? 'Registering...' : 'Register'}
+          <span className='-mt-1'>{isLoading ? 'Registering' : 'Register'}</span>
+          <ThreeDots
+            height='20'
+            width='20'
+            radius='5'
+            color='brown'
+            ariaLabel='three-dots-loading'
+            visible={isLoading}
+          />
         </Button>
       </div>
     </Layout>

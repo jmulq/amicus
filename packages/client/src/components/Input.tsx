@@ -28,6 +28,7 @@ const Input: React.FC<Props> = ({
   const { errors, touchedFields } = formState ?? {};
   const isTouched = touchedFields?.[name];
   const hasError = !!errors?.[name] && isTouched;
+
   return (
     <div>
       {label && (
@@ -41,7 +42,7 @@ const Input: React.FC<Props> = ({
         readOnly={readOnly}
         {...(detached ? {} : register(name, validation))}
         className={classNames(
-          'border-b border-primary-300 overflow-hidden focus:ring-0 focus:outline-none px-4 py-2 ',
+          'border-b border-primary-300 overflow-hidden focus:ring-0 focus:outline-none px-4 py-2 disabled:text-neutral-500',
           readOnly ? 'text-neutral-500' : '',
           className,
         )}

@@ -1,31 +1,15 @@
-import { Navigate } from "react-router-dom";
-import AmicusRegistry from "../abis/AmicusRegistry.json";
-import { Route as RouteType } from "../types";
-import { useAccount, useChainId, useContractRead } from "wagmi";
-import { contracts } from "@/web3/config";
-import { zeroAddress } from "viem";
-import { useAmicusProfile } from "@/context/AmicusProfileContext";
+import { AmicusProfileContext } from '@/context/AmicusProfileContext';
+import { useContext } from 'react';
+import { Navigate } from 'react-router-dom';
+import { zeroAddress } from 'viem';
+import { Route as RouteType } from '../types';
 
-const ProtectedRoute: React.FC<RouteType> = ({
-  redirectTo = "/register",
-  children,
-}) => {
-  const chainId = useChainId();
-  const { address } = useAccount();
-  const { setProfile } = useAmicusProfile();
+const ProtectedRoute: React.FC<RouteType> = ({ redirectTo = '/register', children }) => {
+  const profile = useContext(AmicusProfileContext);
 
-  const { data, isLoading } = useContractRead({
-    address: contracts[chainId === (5 || 80001) ? chainId : 5].registry,
-    abi: AmicusRegistry,
-    functionName: "getUserProfileAddress",
-    args: [address],
-    enabled: Boolean(address),
-  });
-
-  if (data == zeroAddress && !isLoading) {
+  if (profile === zeroAddress) {
     return <Navigate to={redirectTo} replace />;
   }
-  setProfile(data as `0x${string}`);
 
   return <>{children}</>;
 };

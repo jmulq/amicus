@@ -39,7 +39,7 @@ const Button: React.FC<Props> = ({
           {children}
         </Link>
       ) : (
-        <button className={classes} {...props}>
+        <button className={classes} {...props} disabled={disabled}>
           {children}
         </button>
       )}
