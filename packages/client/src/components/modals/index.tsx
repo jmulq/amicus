@@ -50,12 +50,13 @@ const Modal: FC<ModalProps> = ({ renderContent, title, open, className = '', siz
                 className={classNames(
                   baseClasses,
                   className,
+                  'w-[600px]',
                   size === 'sm'
-                    ? 'max-w-sm'
+                    ? 'w-[150px]'
                     : size === 'md'
-                    ? 'max-w-[400px]'
+                    ? 'w-[400px]'
                     : size === 'lg'
-                    ? 'max-w-lg'
+                    ? 'w-[600px]'
                     : '',
                 )}
               >

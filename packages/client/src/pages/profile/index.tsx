@@ -2,32 +2,24 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import pofileArt from '@/assets/profile-picture.png';
 import Button from '@/components/Button';
-import Input from '@/components/Input';
 import Skeleton from '@/components/Skeleton';
+import AddFriendModal from '@/components/modals/AddFriend';
 import { AmicusProfileContext } from '@/context/AmicusProfileContext';
 import useChainExplorer from '@/hooks/useChainExplorer';
 import Layout from '@/layout';
 import { truncateAddress } from '@/utils';
-import { useContext } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AmicusProfile from '../../abis/AmicusProfile.json';
 
 const ProfilePage = () => {
+  const [showModal, setShowModal] = useState(false);
   const profile = useContext(AmicusProfileContext);
-  const { writeFn, readFn, isLoading } = useChainExplorer({
+  const { writeFn, readFn } = useChainExplorer({
     abi: AmicusProfile,
     contract: profile,
   });
   const navigate = useNavigate();
-
-  const methods = useForm({
-    mode: 'all',
-    defaultValues: {
-      address: '',
-    },
-    reValidateMode: 'onChange',
-  });
 
   // If no profile in the Amicus Context then redirect to landing page
   if (!profile) {
@@ -51,60 +43,32 @@ const ProfilePage = () => {
       </Layout>
     );
 
-  // change const to let to preview
-  const [profileName, profileImage, profileFriends, profileInboundReqs, profileOutboundReqs] =
-    result as [
-      string,
-      string,
-      { profile: `0x${string}`; chain: number }[],
-      { profile: `0x${string}` }[],
-      { profile: `0x${string}` }[],
-    ];
+  const [
+    profileName,
+    profileImage,
+    profileFriends = [],
+    profileInboundReqs = [],
+    profileOutboundReqs = [],
+  ] = result as [
+    string,
+    string,
+    { profile: `0x${string}`; chain: number }[],
+    { profile: `0x${string}` }[],
+    { profile: `0x${string}` }[],
+  ];
   console.log('profileImage', profileImage);
-
-  // uncomment to preview
-  // profileFriends = [
-  //   {
-  //     name: 'test',
-  //     image: 'https://avatars.githubusercontent.com/u/5527340?v=4',
-  //   },
-  //   {
-  //     name: 'test',
-  //     image: 'https://avatars.githubusercontent.com/u/5527340?v=4',
-  //   },
-  // ];
-
-  // profileInboundReqs = [
-  //   {
-  //     profile: '0xbAe7d9DD0b1818073e9eF0724E2e43B719677fEE',
-  //   },
-  //   {
-  //     profile: '0xbAe7d9DD0b1818073e9eF0724E2e43B719677fEE',
-  //   },
-  // ];
-
-  // profileOutboundReqs = [
-  //   {
-  //     profile: '0xbAe7d9DD0b1818073e9eF0724E2e43B719677fEE',
-  //   },
-  //   {
-  //     profile: '0xbAe7d9DD0b1818073e9eF0724E2e43B719677fEE',
-  //   },
-  // ];
 
   const acceptFriendReqest = (req: { profile: `0x${string}` }) => {
     writeFn('acceptFriendRequest', [req.profile], !!profile && !!req.profile);
-  }
+  };
 
-  const onSubmit = methods.handleSubmit((input) => {
-    console.log('clicked');
-    const isValid = !!profile && !!input.address;
-    console.log('IS VALID', isValid);
-    writeFn('sendFriendRequest', [input.address], !!profile && !!input.address);
-  });
+  const handleClick = () => {
+    setShowModal(true);
+  };
 
   return (
     <Layout>
+      <AddFriendModal show={showModal} setShow={setShowModal} />;
       <div className='flex gap-x-10'>
         <div className='flex flex-col gap-y-10 flex-1'>
           <div className='h-fit relative overflow-hidden'>
@@ -115,14 +79,19 @@ const ProfilePage = () => {
           </div>
 
           <div className='space-y-7'>
-            <h3 className='font-bold border-b pb-4 border-primary-300'>Friends</h3>
+            <div className='border-b pb-4 border-primary-300 flex justify-between items-center'>
+              <h3 className='font-bold '>Friends</h3>
+              <Button size='sm' className='h-10 text-white bg-blue-500' onClick={handleClick}>
+                Add Friend
+              </Button>
+            </div>
             <div className='space-y-4'>
               {profileFriends.length ? (
                 profileFriends.map((friend, index) => (
                   <div key={index} className='flex justify-between items-end'>
                     <div className='gap-x-4 items-center flex'>
                       <div className='rounded-full h-10 w-10 border border-gray-400 overflow-hidden bg-slate-300'>
-                        <img src={friend.image} alt='' />
+                        <img src={''} alt='' />
                       </div>
                       <p>{truncateAddress(friend.profile)}</p>
                     </div>
@@ -140,28 +109,6 @@ const ProfilePage = () => {
 
         {/* Right half */}
         <div className='w-[40%] space-y-10'>
-          <FormProvider {...methods}>
-            <form className='space-y-3'>
-              <Input
-                name='address'
-                label='Add Friend'
-                placeholder='Enter an address you wish to send a friend request'
-                className='w-full py-3'
-                disabled={!profile || isLoading}
-              />
-              <Button
-                size='sm'
-                type='submit'
-                intent='secondary'
-                className='h-10 text-white ml-auto'
-                disabled={methods.getValues('address') === '' || !profile || isLoading}
-                onClick={onSubmit}
-              >
-                {isLoading ? 'Sending...' : 'Send'}
-              </Button>
-            </form>
-          </FormProvider>
-
           <div className='border border-primary-300 rounded-lg h-[30vh] px-4 py-3 bg-white'>
             <p className='border-b pb-3'>Inbound Requests</p>
             <div className='py-3 space-y-3'>
@@ -169,7 +116,12 @@ const ProfilePage = () => {
                 profileInboundReqs.map((req) => (
                   <div className='flex gap-x-2 items-center'>
                     <p className='flex-1'>{truncateAddress(req.profile, 12)}</p>
-                    <Button size='sm' intent='secondary' className='text-white' onClick={() => acceptFriendReqest(req)}>
+                    <Button
+                      size='sm'
+                      intent='secondary'
+                      className='text-white'
+                      onClick={() => acceptFriendReqest(req)}
+                    >
                       Accept
                     </Button>
                     <Button size='sm' className='bg-rose-500 text-white'>
