@@ -56,7 +56,7 @@ const ProfilePage = () => {
     result as [
       string,
       string,
-      { name: string; image: string }[],
+      { profile: `0x${string}`; chain: number }[],
       { profile: `0x${string}` }[],
       { profile: `0x${string}` }[],
     ];
@@ -92,6 +92,10 @@ const ProfilePage = () => {
   //   },
   // ];
 
+  const acceptFriendReqest = (req: { profile: `0x${string}` }) => {
+    writeFn('acceptFriendRequest', [req.profile], !!profile && !!req.profile);
+  }
+
   const onSubmit = methods.handleSubmit((input) => {
     console.log('clicked');
     const isValid = !!profile && !!input.address;
@@ -120,7 +124,7 @@ const ProfilePage = () => {
                       <div className='rounded-full h-10 w-10 border border-gray-400 overflow-hidden bg-slate-300'>
                         <img src={friend.image} alt='' />
                       </div>
-                      <p>{friend.name}</p>
+                      <p>{truncateAddress(friend.profile)}</p>
                     </div>
                     <Button size='sm' className='h-10 text-white bg-rose-500'>
                       Remove
@@ -165,7 +169,7 @@ const ProfilePage = () => {
                 profileInboundReqs.map((req) => (
                   <div className='flex gap-x-2 items-center'>
                     <p className='flex-1'>{truncateAddress(req.profile, 12)}</p>
-                    <Button size='sm' intent='secondary' className='text-white'>
+                    <Button size='sm' intent='secondary' className='text-white' onClick={() => acceptFriendReqest(req)}>
                       Accept
                     </Button>
                     <Button size='sm' className='bg-rose-500 text-white'>
