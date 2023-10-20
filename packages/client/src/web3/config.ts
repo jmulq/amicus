@@ -1,8 +1,8 @@
-import { getDefaultWallets } from '@rainbow-me/rainbowkit';
-import { configureChains, createConfig } from 'wagmi';
-import { goerli, polygonMumbai } from 'wagmi/chains';
-import { alchemyProvider } from 'wagmi/providers/alchemy';
-import { publicProvider } from 'wagmi/providers/public';
+import { getDefaultWallets } from "@rainbow-me/rainbowkit";
+import { configureChains, createConfig } from "wagmi";
+import { goerli, polygonMumbai } from "wagmi/chains";
+import { alchemyProvider } from "wagmi/providers/alchemy";
+import { publicProvider } from "wagmi/providers/public";
 
 const { chains, publicClient } = configureChains(
   [polygonMumbai, goerli],
@@ -14,8 +14,10 @@ const { chains, publicClient } = configureChains(
   ]
 );
 
+const validChains = chains.map((c) => c.id) as number[];
+
 const { connectors } = getDefaultWallets({
-  appName: 'Amicus',
+  appName: "Amicus",
   projectId: import.meta.env.VITE_INFURA_PROJECT_ID,
   chains,
 });
@@ -39,4 +41,24 @@ const contracts = {
   },
 };
 
-export { chains, contracts, wagmiConfig };
+// Map normal chain IDs to wormhole chain IDs
+// Ethereum/Goerli = 2
+// Polygon/Mumbai = 5
+const chainIdToWormholeIdMapping = {
+  5: 2,
+  80001: 5,
+};
+
+const wormholeIdToChainIdMapping = {
+  2: 5,
+  5: 80001,
+};
+
+export {
+  chains,
+  validChains,
+  contracts,
+  wagmiConfig,
+  chainIdToWormholeIdMapping,
+  wormholeIdToChainIdMapping,
+};

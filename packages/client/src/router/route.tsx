@@ -1,11 +1,13 @@
+import { AmicusProfileContext } from '@/context/AmicusProfileContext';
+import { useContext } from 'react';
 import { Navigate } from 'react-router-dom';
+import { zeroAddress } from 'viem';
 import { Route as RouteType } from '../types';
-import { useAccount } from 'wagmi';
 
 const ProtectedRoute: React.FC<RouteType> = ({ redirectTo = '/register', children }) => {
-  const {address} = useAccount();
+  const profile = useContext(AmicusProfileContext);
 
-  if (!address) {
+  if (profile === zeroAddress) {
     return <Navigate to={redirectTo} replace />;
   }
 
