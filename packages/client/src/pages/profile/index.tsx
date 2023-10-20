@@ -112,7 +112,7 @@ const ProfilePage = () => {
 
   return (
     <Layout>
-      <AddFriendModal show={showModal} setShow={setShowModal} />;
+      <AddFriendModal show={showModal} setShow={setShowModal} />
       <div className="flex gap-x-10">
         <div className="flex flex-col gap-y-10 flex-1">
           <div className="h-fit relative overflow-hidden">
