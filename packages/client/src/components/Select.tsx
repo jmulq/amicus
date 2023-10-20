@@ -13,10 +13,11 @@ type Option = {
 type Props = {
   name: string;
   options: Option[];
+  defaultValue?: Option;
 };
 
-const Select: React.FC<Props> = ({ name, options }) => {
-  const [selected, setSelected] = useState(options[0]);
+const Select: React.FC<Props> = ({ name, options, defaultValue }) => {
+  const [selected, setSelected] = useState(defaultValue ?? options[0]);
   const { setValue } = useFormContext() ?? {};
   // const { errors, touchedFields } = formState ?? {};
   // const isTouched = touchedFields?.[name];

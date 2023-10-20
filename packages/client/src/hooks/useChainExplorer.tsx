@@ -27,6 +27,7 @@ const useChainExplorer = ({ abi, contract }: { abi: any; contract?: `0x${string}
   const [prepare, setPrepare] = useState<OpState>({});
   const [args, setArgs] = useState<(string | number | boolean)[]>([]);
   const [functionName, setFunctionName] = useState('');
+  const [value, setValue] = useState<bigint | undefined>();
   const [canWrite, setCanWrite] = useState(args.length > 0);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setSuccess] = useState(false);
@@ -45,6 +46,7 @@ const useChainExplorer = ({ abi, contract }: { abi: any; contract?: `0x${string}
     functionName,
     args,
     enabled: canWrite,
+    value,
   });
 
   // Watch for changes in the prepare state
@@ -116,9 +118,10 @@ const useChainExplorer = ({ abi, contract }: { abi: any; contract?: `0x${string}
     }
   }, [prepareError, txError]);
 
-  const writeFn = (functionName: string, args: (string | number | boolean)[], valid: boolean) => {
+  const writeFn = (functionName: string, args: (string | number | boolean)[], valid: boolean, value?: bigint) => {
     setFunctionName(functionName);
     setArgs(args);
+    setValue(value);
     setCanWrite(valid);
   };
 
@@ -158,11 +161,11 @@ const useChainExplorer = ({ abi, contract }: { abi: any; contract?: `0x${string}
       });
     }
 
-    const { data } = useContractReads({
+    const { data,  } = useContractReads({
       contracts: args,
-      enabled,
+      enabled
     });
-
+    
     return data?.map((d) => d.result) as any[];
   };
 

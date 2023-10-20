@@ -11,10 +11,15 @@ import { truncateAddress } from '@/utils';
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AmicusProfile from '../../abis/AmicusProfile.json';
+import AmicusHub from '../../abis/AmicusHub.json';
+import { useChainId } from 'wagmi';
+import { contracts, wormholeIdToChainIdMapping } from '@/web3/config';
+import { readContract } from 'wagmi/actions';
 
 const ProfilePage = () => {
   const [showModal, setShowModal] = useState(false);
   const profile = useContext(AmicusProfileContext);
+  const chainId = useChainId();
   const { writeFn, readFn } = useChainExplorer({
     abi: AmicusProfile,
     contract: profile,
@@ -34,9 +39,9 @@ const ProfilePage = () => {
     'getOutboundFriendRequests',
   ];
 
-  const result = readFn(reads, !!profile);
+  const result = readFn(reads, !!profile, profile);
 
-  if (result.length < 1)
+  if (!result || result.length < 1)
     return (
       <Layout>
         <Skeleton rowCount={7} />;
@@ -53,13 +58,28 @@ const ProfilePage = () => {
     string,
     string,
     { profile: `0x${string}`; chain: number }[],
-    { profile: `0x${string}` }[],
-    { profile: `0x${string}` }[],
+    { profile: `0x${string}`; chain: number }[],
+    { profile: `0x${string}`; chain: number }[],
   ];
   console.log('profileImage', profileImage);
 
-  const acceptFriendReqest = (req: { profile: `0x${string}` }) => {
-    writeFn('acceptFriendRequest', [req.profile], !!profile && !!req.profile);
+  const acceptFriendReqest = async (req: { profile: `0x${string}`, chain: number }) => {
+    const requestChain = wormholeIdToChainIdMapping[req.chain as 2 | 5]
+    const isCrossChainRequest = requestChain !== chainId;
+    if (isCrossChainRequest) {
+      const wormholeSourceHub = contracts[chainId as 5 | 80001].hub;
+      const wormholeDestinationHub = contracts[requestChain as 5 | 80001].hub;
+
+      const crossChainFee = await readContract({
+        address: wormholeSourceHub,
+        abi: AmicusHub,
+        functionName: 'quoteCrossChainGreeting',
+        args: [req.chain] // req.chain is the wormhole chain ID the request came from
+      });
+      writeFn('acceptCrossChainFriendRequest', [req.profile, req.chain, wormholeDestinationHub], !!profile && !!req.profile, crossChainFee as bigint);
+    } else {
+      writeFn('acceptFriendRequest', [req.profile], !!profile && !!req.profile);
+    }
   };
 
   const handleClick = () => {
