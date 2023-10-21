@@ -43,7 +43,7 @@ const useChainExplorer = ({ abi, contract }: { abi: any; contract?: `0x${string}
     isFetching: isPrepareFetching,
     data: prepareData,
   } = usePrepareContractWrite({
-    address: contract ?? contracts[chainId === (5 || 80001) ? chainId : 5].factory,
+    address: contract ?? contracts[chainId as 5 || 80001].factory,
     abi,
     functionName,
     args,

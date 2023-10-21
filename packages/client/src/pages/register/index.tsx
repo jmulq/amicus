@@ -75,9 +75,8 @@ const RegisterPage = () => {
       const formData = new FormData();
       formData.append('file', file, file.name);
       const imgHash = await mutation.mutateAsync(formData);
-      imageUrl = `https://gateway.pinata.cloud/ipfs/${imgHash}`;
+      imageUrl = `https://scarlet-absolute-bonobo-814.mypinata.cloud/ipfs/${imgHash}`;
     }
-
     writeFn('createUserProfile', [input.username, imageUrl], !!address && !!input.username);
   });
 

@@ -29,6 +29,8 @@ export const env = createEnv({
     NEXT_PUBLIC_PROD_NETWORKS_DEV: z.enum(["true", "false"]).default("false"),
     NEXT_PUBLIC_ALCHEMY_API_KEY: z.string().min(1).optional(),
     NEXT_PUBLIC_INFURA_API_KEY: z.string().min(1).optional(),
+    NEXT_MUMBAI_REGISTRY: z.string().min(1).optional(),
+    NEXT_GOERLI_REGISTRY: z.string().min(1).optional(),
     NEXT_PUBLIC_LIVEPEER_API_KEY: z.string().min(1).optional(),
     NEXT_PUBLIC_SITE_URL: z.string().url().optional(),
   },
@@ -52,5 +54,7 @@ export const env = createEnv({
     NEXT_PUBLIC_INFURA_API_KEY: process.env.NEXT_PUBLIC_INFURA_API_KEY,
     NEXT_PUBLIC_LIVEPEER_API_KEY: process.env.NEXT_PUBLIC_LIVEPEER_API_KEY,
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+    NEXT_GOERLI_REGISTRY: process.env.NEXT_GOERLI_REGISTRY,
+    NEXT_MUMBAI_REGISTRY: process.env.NEXT_MUMBAI_REGISTRY,
   },
 })

@@ -55,17 +55,17 @@ contract AmicusRegistry {
         require(_dappId > 0 && _dappId <= dappCount, "Invalid Dapp ID");
 
         Dapp storage dapp = dapps[_dappId];
-        dapp.connectedProfiles.push(msg.sender);
 
         for (uint i = 0; i < dapp.connectedProfiles.length; i++) {
             require(dapp.connectedProfiles[i] != msg.sender, "User already connected to Dapp");
         }
+        dapp.connectedProfiles.push(msg.sender);
 
         emit UserConnectedToDapp(_dappId, msg.sender);
     }
 
     function getDappUsers(uint256 _dappId) external view returns (address[] memory) {
         require(_dappId > 0 && _dappId <= dappCount, "Invalid Dapp ID");
-        return dapps[_dappId].connectedUsers;
+        return dapps[_dappId].connectedProfiles;
     }
 }
