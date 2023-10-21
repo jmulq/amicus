@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./AmicusHub.sol";
 import "./AmicusLibrary.sol";
+import "./AmicusRegistry.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 
@@ -10,14 +11,16 @@ contract AmicusProfile is Ownable {
     using AmicusLibrary for AmicusLibrary.Friend;
 
     AmicusHub private amicusHub;
+    AmicusRegistry private amicusRegistry;
     
     string public name;
     string public image;
 
     constructor(
-        AmicusHub _amicusHub, address _owner, string memory _name, string memory _image
+        AmicusHub _amicusHub, AmicusRegistry _amicusRegistry, address _owner, string memory _name, string memory _image
     ) Ownable(_owner) {
         amicusHub = _amicusHub;
+        amicusRegistry = _amicusRegistry;
         name = _name;
         image = _image;
     }
@@ -68,5 +71,9 @@ contract AmicusProfile is Ownable {
     // Target address is the AmicusHub contract address on the target chain (the chain the request was sent from)
     function rejectCrossChainFriendRequest(address sender, uint16 sourceChain, address targetAddress) external payable onlyOwner {
         amicusHub.rejectCrossChainFriendRequest{value: msg.value}(sender, sourceChain, targetAddress);
+    }
+
+    function connectToDapp(uint256 dappId) external onlyOwner {
+        amicusRegistry.connectUser(dappId);
     }
 }

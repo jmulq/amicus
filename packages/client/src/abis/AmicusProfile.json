@@ -7,6 +7,11 @@
         "type": "address"
       },
       {
+        "internalType": "contract AmicusRegistry",
+        "name": "_amicusRegistry",
+        "type": "address"
+      },
+      {
         "internalType": "address",
         "name": "_owner",
         "type": "address"
@@ -98,6 +103,19 @@
       }
     ],
     "name": "acceptFriendRequest",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "dappId",
+        "type": "uint256"
+      }
+    ],
+    "name": "connectToDapp",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

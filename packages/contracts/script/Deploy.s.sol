@@ -16,10 +16,12 @@ contract DeployCoreContracts is Script {
         uint256 senderPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(senderPrivateKey);
 
-        AmicusHub hub = new AmicusHub(relayer, wormhole, chain);
         AmicusRegistry registry = new AmicusRegistry();
+        AmicusHub hub = new AmicusHub(relayer, wormhole, chain);
         AmicusProfileFactory factory = new AmicusProfileFactory(address(registry), address(hub));
         
+        registry.registerDapp("Demo Dapp");
+
         console.logString(
             string.concat(
                 "Amicus Hub deployed at: ",

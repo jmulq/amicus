@@ -52,6 +52,11 @@ const ProfilePage = () => {
     const profileData = allProfiles.find((p) => p.id.toLowerCase() === profile.toLowerCase());
     return profileData?.name || truncateAddress(profile as `0x${string}`, 12);
   };
+  
+  const getProfileImage = (profile: string) => {
+    const profileData = allProfiles.find((p) => p.id.toLowerCase() === profile.toLowerCase());
+    return profileData?.image === 'IMG-URL' ? defaultAvatar : profileData?.image;
+  };
 
   const getChainName = (wormholeChainId: number) => {
     if (wormholeChainId === 2) return 'Goerli';
@@ -60,6 +65,7 @@ const ProfilePage = () => {
 
   const [
     profileName,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     profileImage,
     profileFriends = [],
     profileInboundReqs = [],
@@ -108,7 +114,7 @@ const ProfilePage = () => {
         <div className='flex flex-col gap-y-10 flex-1'>
           <div className='relative overflow-hidden h-[364px] border border-primary-300 rounded-lg'>
             <img
-              src={profileImage === 'IMG-URL' ? defaultAvatar : profileImage}
+              src={getProfileImage(connectedProfile)}
               alt=''
               className='h-[364px] w-full object-cover'
             />
@@ -130,7 +136,7 @@ const ProfilePage = () => {
                   <div key={index} className='flex justify-between items-end'>
                     <div className='gap-x-4 items-center flex'>
                       <div className='rounded-full h-10 w-10 border border-gray-400 overflow-hidden bg-slate-300'>
-                        <img src={''} alt='' />
+                        <img src={getProfileImage(friend.profile)} alt='' />
                       </div>
                       <p>{getProfileName(friend.profile)}</p>
                       <p className='text-gray-400 text-sm'>({getChainName(friend.chain)})</p>
