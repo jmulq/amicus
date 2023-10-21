@@ -14,6 +14,7 @@ import {
 
 type OpState = {
   isLoading?: boolean;
+  isFetching?: boolean;
   isError?: boolean;
   isSuccess?: boolean;
   error?: Error | null;
@@ -39,6 +40,7 @@ const useChainExplorer = ({ abi, contract }: { abi: any; contract?: `0x${string}
     isError: isPrepareError,
     isSuccess: isPrepareSuccess,
     isLoading: isPrepareLoading,
+    isFetching: isPrepareFetching,
     data: prepareData,
   } = usePrepareContractWrite({
     address: contract ?? contracts[chainId === (5 || 80001) ? chainId : 5].factory,
@@ -56,17 +58,32 @@ const useChainExplorer = ({ abi, contract }: { abi: any; contract?: `0x${string}
     setPrepare((prev) => ({
       ...prev,
       isLoading: isPrepareLoading,
+      isFetching: isPrepareFetching,
       error: prepareError,
       isError: isPrepareError,
       isSuccess: isPrepareSuccess,
       data: prepareData,
     }));
-  }, [prepareError, isPrepareError, isPrepareSuccess, isPrepareLoading, prepareData]);
+  }, [
+    prepareError,
+    isPrepareError,
+    isPrepareSuccess,
+    isPrepareLoading,
+    prepareData,
+    isPrepareFetching,
+  ]);
 
-  const { data, write } = useContractWrite(config);
+  const {
+    data,
+    write,
+    isLoading: isWLoading,
+    isError: isWError,
+  } = useContractWrite(config);
+
 
   const {
     isLoading: isTxLoading,
+    isFetching: isTxFetching,
     isSuccess: isTxSuccess,
     isError: isTxError,
     error: txError,
@@ -80,12 +97,13 @@ const useChainExplorer = ({ abi, contract }: { abi: any; contract?: `0x${string}
     setTransaction((prev) => ({
       ...prev,
       isLoading: isTxLoading,
+      isFetching: isTxFetching,
       isSuccess: isTxSuccess,
       isError: isTxError,
       error: txError,
       data: txData,
     }));
-  }, [data, isTxLoading, isTxSuccess, isTxError, txError, txData]);
+  }, [data, isTxLoading, isTxSuccess, isTxError, txError, txData, isTxFetching]);
 
   // Write to the blockchain if initial validations pass
   useEffect(() => {
@@ -95,16 +113,14 @@ const useChainExplorer = ({ abi, contract }: { abi: any; contract?: `0x${string}
   }, [canWrite, write]);
 
   useEffect(() => {
-    if (isPrepareLoading) {
+    if (isPrepareLoading || isTxLoading || isWLoading) {
       setIsLoading(true);
-      return;
     }
 
-    if (isTxSuccess) {
+    if (isTxSuccess || isTxError || isPrepareError || isWError) {
       setIsLoading(false);
-      return;
     }
-  }, [isPrepareLoading, isTxSuccess]);
+  }, [isPrepareError, isPrepareLoading, isTxError, isTxLoading, isTxSuccess, isWError, isWLoading]);
 
   useEffect(() => {
     if (isTxSuccess) {
@@ -118,7 +134,12 @@ const useChainExplorer = ({ abi, contract }: { abi: any; contract?: `0x${string}
     }
   }, [prepareError, txError]);
 
-  const writeFn = (functionName: string, args: (string | number | boolean)[], valid: boolean, value?: bigint) => {
+  const writeFn = (
+    functionName: string,
+    args: (string | number | boolean)[],
+    valid: boolean,
+    value?: bigint,
+  ) => {
     setFunctionName(functionName);
     setArgs(args);
     setValue(value);
@@ -161,11 +182,11 @@ const useChainExplorer = ({ abi, contract }: { abi: any; contract?: `0x${string}
       });
     }
 
-    const { data,  } = useContractReads({
+    const { data } = useContractReads({
       contracts: args,
-      enabled
+      enabled,
     });
-    
+
     return data?.map((d) => d.result) as any[];
   };
 
