@@ -5,9 +5,9 @@ import { zeroAddress } from 'viem';
 import { Route as RouteType } from '../types';
 
 const ProtectedRoute: React.FC<RouteType> = ({ redirectTo = '/register', children }) => {
-  const profile = useContext(AmicusProfileContext);
+  const { connectedProfile } = useContext(AmicusProfileContext);
 
-  if (profile === zeroAddress) {
+  if (connectedProfile === zeroAddress) {
     return <Navigate to={redirectTo} replace />;
   }
 

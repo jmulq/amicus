@@ -1,32 +1,28 @@
-import Modal from "@/components/modals";
-import { AmicusProfileContext } from "@/context/AmicusProfileContext";
-import useChainExplorer from "@/hooks/useChainExplorer";
-import React, { useContext, useEffect, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-import { ThreeDots } from "react-loader-spinner";
-import AmicusProfile from "../../abis/AmicusProfile.json";
-import AmicusHub from "../../abis/AmicusHub.json";
-import ethereumArt from "../../assets/ethereum.png";
-import polygonArt from "../../assets/polygon.png";
-import Button from "../Button";
-import Input from "../Input";
-import Select from "../Select";
-import { useChainId } from "wagmi";
-import { readContract } from "@wagmi/core";
-import {
-  chainIdToWormholeIdMapping,
-  contracts,
-  validChains,
-} from "@/web3/config";
+import Modal from '@/components/modals';
+import { AmicusProfileContext } from '@/context/AmicusProfileContext';
+import useChainExplorer from '@/hooks/useChainExplorer';
+import { chainIdToWormholeIdMapping, contracts, validChains } from '@/web3/config';
+import { readContract } from '@wagmi/core';
+import React, { useContext, useEffect, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { ThreeDots } from 'react-loader-spinner';
+import { useChainId } from 'wagmi';
+import AmicusHub from '../../abis/AmicusHub.json';
+import AmicusProfile from '../../abis/AmicusProfile.json';
+import ethereumArt from '../../assets/ethereum.png';
+import polygonArt from '../../assets/polygon.png';
+import Button from '../Button';
+import Input from '../Input';
+import Select from '../Select';
 
 const networks = [
   {
-    label: "Mumbai",
+    label: 'Mumbai',
     value: 80001,
     avatar: polygonArt,
   },
   {
-    label: "Goerli",
+    label: 'Goerli',
     value: 5,
     avatar: ethereumArt,
   },
@@ -53,9 +49,9 @@ const AddFriendModal: React.FC<Props> = ({ show = false, setShow }) => {
   }, [transaction.isError, transaction.isSuccess, prepare.isError]);
 
   const methods = useForm({
-    mode: "all",
+    mode: 'all',
     defaultValues: {
-      address: "",
+      address: '',
       chain: chainId,
     },
   });
@@ -63,73 +59,69 @@ const AddFriendModal: React.FC<Props> = ({ show = false, setShow }) => {
   const onSubmit = methods.handleSubmit(async (input) => {
     setIsSubmitting(true);
     const isCrossChainRequest = input.chain != chainId;
-    const isValid =
-      !!connectedProfile &&
-      !!input.address &&
-      validChains.includes(input.chain);
+    const isValid = !!connectedProfile && !!input.address && validChains.includes(input.chain);
 
     if (!isValid) return;
 
     if (isCrossChainRequest) {
-      const wormholeChainId =
-        chainIdToWormholeIdMapping[input.chain as 5 | 80001];
+      const wormholeChainId = chainIdToWormholeIdMapping[input.chain as 5 | 80001];
       const wormholeSourceHub = contracts[chainId as 5 | 80001].hub;
       const wormholeDestinationHub = contracts[input.chain as 5 | 80001].hub;
       const crossChainFee = await readContract({
         address: wormholeSourceHub,
         abi: AmicusHub,
-        functionName: "quoteCrossChainGreeting",
+        functionName: 'quoteCrossChainGreeting',
         args: [wormholeChainId],
       });
       writeFn(
-        "sendCrossChainFriendRequest",
+        'sendCrossChainFriendRequest',
         [input.address, wormholeChainId, wormholeDestinationHub],
         isValid,
-        crossChainFee as bigint
+        crossChainFee as bigint,
       );
     } else {
-      writeFn("sendFriendRequest", [input.address], isValid);
+      writeFn('sendFriendRequest', [input.address], isValid);
     }
   });
 
+  // clear form when show if false
+  useEffect(() => {
+    if (!show) {
+      methods.reset({
+        address: '',
+        chain: chainId,
+      });
+    }
+  }, [show, methods, chainId]);
+
   const renderContent = () => {
     return (
-      <div className="px-10 h-fit py-7">
+      <div className='px-10 h-fit py-7'>
         <FormProvider {...methods}>
-          <form className="flex flex-col gap-y-7">
+          <form className='flex flex-col gap-y-7'>
             <Select
-              name="chain"
+              name='chain'
               options={networks}
               defaultValue={networks.find((n) => n.value == chainId)}
             />
 
-            <Input
-              name="address"
-              placeholder="0x0000000"
-              className="border !border-black w-full"
-            />
+            <Input name='address' placeholder='0x0000000' className='border !border-black w-full' />
 
             <Button
-              type="submit"
-              size="lg"
-              intent="secondary"
-              className="rounded-full w-80 mx-auto flex text-center justify-center items-center gap-x-2"
-              disabled={
-                !connectedProfile ||
-                !methods.getValues("address") ||
-                isSubmitting
-              }
+              type='submit'
+              size='lg'
+              intent='secondary'
+              className='rounded-full w-80 mx-auto flex text-center justify-center items-center gap-x-2'
+              disabled={!connectedProfile || !methods.getValues('address') || isSubmitting}
               onClick={onSubmit}
             >
-              <span className="-mt-1">
-                {isSubmitting ? "Adding" : "Add Friend"}
-              </span>
+              <span className='-mt-1'>{isSubmitting ? 'Adding' : 'Add Friend'}</span>
               <ThreeDots
-                height="20"
-                width="20"
-                radius="5"
-                color="brown"
-                ariaLabel="three-dots-loading"
+                height='20'
+                width='20'
+                radius='5'
+                color='brown'
+                ariaLabel='three-dots-loading'
                 visible={isSubmitting}
               />
             </Button>
@@ -139,11 +131,19 @@ const AddFriendModal: React.FC<Props> = ({ show = false, setShow }) => {
     );
   };
 
+  useEffect(
+    () => () => {
+      setShow(false);
+      setIsSubmitting(false);
+    },
+    [setShow],
+  );
+
   return (
     <Modal
-      title="Add Friend"
+      title='Add Friend'
       open={show}
-      size="lg"
+      size='lg'
       onClose={() => setShow(false)}
       renderContent={renderContent}
     />
