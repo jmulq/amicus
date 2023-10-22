@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: AmicusProfileFactory
-    network: goerli
+    network: mumbai
     source:
       abi: AmicusProfileFactory
-      address: "0x78B18D9401de3d994C56ac9654a513B600e10f53"
-      startBlock: 9907776
+      address: "0xAF3F13768099EbE5BB392b25F689B7cf59311492"
+      startBlock: 41503171
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -28,7 +28,7 @@ dataSources:
 templates:
   - kind: ethereum
     name: AmicusProfile
-    network: goerli
+    network: mumbai
     source:
       abi: AmicusProfile
     mapping:

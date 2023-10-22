@@ -576,10 +576,10 @@ interface ConnectButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
 
 const contracts = {
   5: {
-    registry: "0x647Ccb0D86f40b65fc2728f0ecE4FEcdBA55be1d",
+    registry: "0x924baB7488e51d8B7A3BD845489520B539c405Fd",
   },
   80001: {
-    registry: "0x1385104D516BeA561baf104F884786bAf2032Efe",
+    registry: "0xC02b8826ebc5ba06c032265492017Ecb7e421EF3",
   },
 }
 
@@ -640,6 +640,8 @@ export function ConnectButton({
     return "Connect"
   }
 
+  const displayFriends = isSuccess && friends?.length > 0;
+
   return (
     <>
       <Button
@@ -653,7 +655,7 @@ export function ConnectButton({
       >
         {getText()}
       </Button>
-      <table className="mt-7 w-full table-auto border-collapse text-left">
+      {displayFriends && <table className="mt-7 w-full table-auto border-collapse text-left">
         <thead>
           <tr>
             <th className="px-4 py-2 text-center text-lg text-muted-foreground">
@@ -663,20 +665,21 @@ export function ConnectButton({
         </thead>
         <tbody>
           {/* // @ts-ignore */}
-          {
-            friends?.map((friend: any) => {
-              console.log("friends", friend)
+          {friends?.map((friend: any) => {
+            if (dappUsers.includes(friend.profile)) {
               return (
                 <tr>
-                  <td className="px-4 py-2 text-center text-md text-muted-foreground">
+                  <td className="text-md px-4 py-2 text-center text-muted-foreground">
                     {JSON.stringify(friend.profile)}
                   </td>
                 </tr>
               )
-            })
-          }
+            } else {
+              return null
+            }
+          })}
         </tbody>
-      </table>
+      </table>}
     </>
   )
 }
