@@ -137,7 +137,7 @@ const RegisterPage = () => {
           <form>
             <fieldset className='space-y-5' disabled={!address || isSubmitting}>
               <Input name='address' label='address' readOnly className='rounded-full py-3 w-80' />
-              <Input name='username' label='username' required className='rounded-full py-3 w-80' />
+              <Input autoComplete='off' name='username' label='username' required className='rounded-full py-3 w-80' />
             </fieldset>
           </form>
         </FormProvider>

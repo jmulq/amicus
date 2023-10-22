@@ -105,7 +105,7 @@ const AddFriendModal: React.FC<Props> = ({ show = false, setShow }) => {
               defaultValue={networks.find((n) => n.value == chainId)}
             />
 
-            <Input name='address' placeholder='0x0000000' className='border !border-black w-full' />
+            <Input autoComplete='off' name='address' placeholder='0x0000000' className='border !border-black w-full' />
 
             <Button
               type='submit'

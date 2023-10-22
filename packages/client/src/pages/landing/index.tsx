@@ -11,8 +11,7 @@ const LandingPage = () => (
           Amicus - Your Friends, <br /> Everywhere You Go
         </h1>
         <h2 className='text-neutral-600 text-lg'>
-          Unlock a New Era of Social Connectivity in Web3. Own Your Network, Seamlessly Across
-          Blockchains.
+          Unlock a New Era of Social Connectivity in Web3. Own Your Network, Seamlessly Connect Across Multiple Blockchains.
         </h2>
         <Button size='lg' intent='primary' href='/register' className='rounded-full py-5 !px-28'>
           Get Started
