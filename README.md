@@ -14,6 +14,7 @@ Powered by Ethereum, Wormhole, Polygon, and the Graph.
   - [Easing Development for dApps](#easing-development-for-dApps)
 
 - [MVP Features](#mvp-features)
+- [System Overview](#system-overview)
 - [Technologies Used](#technologies-used)
 - [Sytem Design](#system-design)
 
@@ -48,6 +49,11 @@ User registration with the protocol, allowing users to establish an Amicus Profi
 Streamlined friend management.
 Native and cross-chain friend request capabilities.
 Demonstrating Dapp protocol integration, showcasing the effortless mobility of a user's friends across a multitude of Dapps that integrate with the protocol.
+
+## System Overview
+
+![amicus-system](https://github.com/jmulq/amicus/assets/38944661/97d8e808-4536-468c-8f52-5785a2fd7e46)
+
 
 ## Technologies Used
 
