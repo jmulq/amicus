@@ -52,8 +52,7 @@ Demonstrating Dapp protocol integration, showcasing the effortless mobility of a
 
 ## System Overview
 
-![amicus-system](https://github.com/jmulq/amicus/assets/38944661/97d8e808-4536-468c-8f52-5785a2fd7e46)
-
+![system-design](https://github.com/jmulq/amicus/assets/38944661/8cb0131a-5014-426c-a9e1-6f23a02d28a1)
 
 ## Technologies Used
 
