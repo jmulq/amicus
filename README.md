@@ -52,7 +52,7 @@ Demonstrating Dapp protocol integration, showcasing the effortless mobility of a
 
 ## System Overview
 
-![system-design](https://github.com/jmulq/amicus/assets/38944661/8cb0131a-5014-426c-a9e1-6f23a02d28a1)
+![sys-des](https://github.com/jmulq/amicus/assets/38944661/5eeeea4a-9126-4b58-82e3-0b0f0af3982a)
 
 ## Technologies Used
 
