@@ -1,5 +1,7 @@
 # Amicus
 
+Hackathon Showcase - https://ethglobal.com/showcase/amicus-protocol-c5z5e
+
 Amicus is a versatile blockchain protocol at the forefront of the Web3 revolution. It addresses a pivotal aspect of user engagement and social connectivity in this new era. With Amicus, users wield the power to construct, own, and effortlessly transport their social connections across any on-chain application, ushering in a more user-centric and privacy-conscious decentralised internet.
 
 Powered by Ethereum, Wormhole, Polygon, and the Graph.
